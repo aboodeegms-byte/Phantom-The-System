@@ -78,5 +78,4 @@ def scan_ports():
 
 if __name__ == "__main__":
     scan_ports()
-EOF
 

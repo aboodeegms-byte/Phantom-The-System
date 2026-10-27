@@ -1,0 +1,22 @@
+--- PHANTOM SECURITY SCAN REPORT ---
+Target: 0
+Time: 2026-10-27 19:41:03
+
+[!] An error occurred: unknown url type: '0'
+========================================
+--- PHANTOM SECURITY SCAN REPORT ---
+Target: 0
+Time: 2026-10-27 19:41:39
+
+[!] An error occurred: unknown url type: '0'
+========================================
+--- PHANTOM PORT SCAN REPORT ---
+Target: 127.0.0.1
+Time: 2026-10-27 19:59:41
+[-] No open ports detected among targeted list.
+========================================
+--- PHANTOM PORT SCAN REPORT ---
+Target: 127.0.0.1
+Time: 2026-10-27 20:01:13
+[-] No open ports detected among targeted list.
+========================================
