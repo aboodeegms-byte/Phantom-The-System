@@ -1,14 +1,15 @@
-#!/usr/bin/env python3
+#!/usr/init/env python3
 # -*- coding: utf-8 -*-
 """
-PHANTOM THE SYSTEM - Web Vulnerability & Header Scanner
+PHANTOM THE SYSTEM - Web Vulnerability & Header Scanner with Auto-Logging
 Developer: Commander Phantom
-Description: Scans target URLs for basic security headers and XSS vulnerabilities.
+Description: Scans target URLs for basic security headers and XSS, saving reports automatically.
 """
 
 import urllib.request
 import urllib.parse
 import urllib.error
+import datetime
 
 NEON_BLUE = "\033[38;2;0;243;255m"
 DARK_BLUE = "\033[38;2;0;119;182m"
@@ -18,7 +19,7 @@ GRAY = "\033[90m"
 
 def scan_target():
     print(f"\n{NEON_BLUE}====================================================")
-    print(f"         PHANTOM WEB SECURITY SCANNER               ")
+    print(f"     PHANTOM WEB SCANNER + AUTO-LOGGING SYSTEM      ")
     print(f"===================================================={RESET}\n")
 
     target = input(f"{DARK_BLUE}[?] Enter target URL (e.g. http://127.0.0.1:5000): {RESET}").strip()
@@ -26,20 +27,33 @@ def scan_target():
         target = "http://127.0.0.1:5000"
         print(f"{GRAY}[*] No URL provided. Defaulting to local lab: {target}{RESET}")
 
+    report_lines = []
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    report_lines.append(f"--- PHANTOM SECURITY SCAN REPORT ---")
+    report_lines.append(f"Target: {target}")
+    report_lines.append(f"Time: {timestamp}\n")
+
     print(f"\n{GRAY}[*] Scanning target headers for {target}...{RESET}")
     try:
         req = urllib.request.Request(target, headers={'User-Agent': 'PhantomScanner/1.0'})
         with urllib.request.urlopen(req, timeout=5) as response:
             headers = response.info()
-            print(f"\n{WHITE}[+] Response Status: {response.status} {response.reason}{RESET}")
-            print(f"{WHITE}[+] Security Headers Check:{RESET}")
+            status_msg = f"[+] Response Status: {response.status} {response.reason}"
+            print(f"\n{WHITE}{status_msg}{RESET}")
+            report_lines.append(status_msg)
 
+            report_lines.append("[+] Security Headers Check:")
+            print(f"{WHITE}[+] Security Headers Check:{RESET}")
             sec_headers = ['X-Frame-Options', 'X-XSS-Protection', 'Content-Security-Policy', 'Server']
             for h in sec_headers:
                 if h in headers:
-                    print(f"  - {h}: {headers[h]}")
+                    line = f"  - {h}: {headers[h]}"
+                    print(line)
+                    report_lines.append(line)
                 else:
-                    print(f"  {NEON_BLUE}- [!] Missing Header: {h}{RESET}")
+                    line = f"  - [!] Missing Header: {h}"
+                    print(f"{NEON_BLUE}{line}{RESET}")
+                    report_lines.append(line)
 
             # Basic XSS Parameter Check simulation
             test_payload = "<script>alert(1)</script>"
@@ -49,14 +63,29 @@ def scan_target():
             with urllib.request.urlopen(test_req, timeout=5) as test_resp:
                 body = test_resp.read().decode('utf-8', errors='ignore')
                 if test_payload in body:
-                    print(f"{NEON_BLUE}[+] Vulnerability Found: Reflected XSS detected at endpoint!{RESET}")
+                    xss_msg = "[+] Vulnerability Found: Reflected XSS detected at endpoint!"
+                    print(f"{NEON_BLUE}{xss_msg}{RESET}")
+                    report_lines.append(xss_msg)
                 else:
-                    print(f"{GRAY}[-] Payload not reflected directly in standard output.{RESET}")
+                    xss_msg = "[-] Payload not reflected directly in standard output."
+                    print(f"{GRAY}{xss_msg}{RESET}")
+                    report_lines.append(xss_msg)
 
     except urllib.error.URLError as e:
-        print(f"\n{WHITE}[!] Connection Error: {e.reason}. Make sure weaker_app.py is running!{RESET}")
+        err_msg = f"[!] Connection Error: {e.reason}. Make sure weaker_app.py is running!"
+        print(f"\n{WHITE}{err_msg}{RESET}")
+        report_lines.append(err_msg)
     except Exception as e:
-        print(f"\n{WHITE}[!] An error occurred: {e}{RESET}")
+        err_msg = f"[!] An error occurred: {e}"
+        print(f"\n{WHITE}{err_msg}{RESET}")
+        report_lines.append(err_msg)
+
+    # Auto-save report to file
+    filename = "phantom_report.txt"
+    with open(filename, "a", encoding="utf-8") as f:
+        f.write("\n".join(report_lines) + "\n" + "="*40 + "\n")
+
+    print(f"\n{NEON_BLUE}[*] Scan report successfully saved to: {filename}{RESET}\n")
 
 if __name__ == "__main__":
     scan_target()
