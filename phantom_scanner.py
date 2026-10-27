@@ -1,7 +1,7 @@
-#!/usr/init/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-PHANTOM THE SYSTEM - Web Vulnerability & Header Scanner with Auto-Logging
+PHANTOM THE SYSTEM - Web Vulnerability & Header Scanner with Auto-Logging & Validation
 Developer: Commander Phantom
 Description: Scans target URLs for basic security headers and XSS, saving reports automatically.
 """
@@ -23,9 +23,15 @@ def scan_target():
     print(f"===================================================={RESET}\n")
 
     target = input(f"{DARK_BLUE}[?] Enter target URL (e.g. http://127.0.0.1:5000): {RESET}").strip()
+
+    # If no input or invalid url format, default or prompt
     if not target:
         target = "http://127.0.0.1:5000"
         print(f"{GRAY}[*] No URL provided. Defaulting to local lab: {target}{RESET}")
+    elif not target.startswith("http://") and not target.startswith("https://"):
+        print(f"{WHITE}[!] Invalid URL format! It must start with http:// or https://{RESET}")
+        print(f"{GRAY}[*] Auto-correcting by prepending http://{RESET}")
+        target = "http://" + target
 
     report_lines = []
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -89,4 +95,5 @@ def scan_target():
 
 if __name__ == "__main__":
     scan_target()
+
 
