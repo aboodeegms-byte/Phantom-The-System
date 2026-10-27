@@ -1,53 +1,77 @@
-import requests
-import sys
-
-BANNER = """
-=========================================
-    🛡️ PHANTOM SCANNER - v2.0 🛡️
-    ماسح الثغرات الشامل (Phantom Framework)
-=========================================
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+PHANTOM THE SYSTEM - Vulnerability Scanner Module
+Developer: Commander Phantom
+Description: Advanced Security Headers & Target Audit Scanner
 """
 
-def scan_target(target_url):
-    print(BANNER)
-    print(f"[*] جاري بدء الفحص الشامل للهدف: {target_url}\n")
-    
-    # 1. اختبار ثغرة Reflected XSS
-    print("[*] جاري فحص مسار XSS (/greet)...")
-    xss_payload = "<script>alert('XSS_TEST')</script>"
-    xss_url = f"{target_url}/greet?name={xss_payload}"
-    
-    try:
-        response_xss = requests.get(xss_url)
-        if xss_payload in response_xss.text:
-            print(f"[!] تنبيه خطير: تم اكتشاف ثغرة Reflected XSS!")
-            print(f"    [+] الرابط المصاب: {xss_url}\n")
-        else:
-            print(f"[-] مسار XSS محصن وآمن ضد الحقن البرمجي 🛡️\n")
-            
-    except requests.exceptions.ConnectionError:
-        print(f"[-] خطأ: تعذر الاتصال بالسيرفر في مسار XSS.")
+import sys
+import urllib.request
+import urllib.parse
+import urllib.error
 
-    # 2. اختبار ثغرة Command Injection (عبر محاولة إرسال أمر مع الـ IP)
-    print("[*] جاري فحص مسار Command Injection (/ping)...")
-    ping_url = f"{target_url}/ping"
-    # نجرب إرسال IP وهمي معه فاصل أمر لتجربة الاستجابة
-    payload_data = {"ip": "127.0.0.1; id"}
+# Neon Blue & Dark Theme Color Codes
+NEON_BLUE = "\033[38;2;0;243;255m"
+DARK_BLUE = "\033[38;2;0;119;182m"
+RESET = "\033[0m"
+WHITE = "\033[97m"
+GRAY = "\033[90m"
+
+def scanner_banner():
+    print(f"\n{NEON_BLUE}====================================================")
+    print(f"       PHANTOM VULNERABILITY SCANNER [v2.0]         ")
+    print(f"===================================================={RESET}\n")
+
+def scan_target():
+    scanner_banner()
+    target = input(f"{DARK_BLUE}Enter target URL (e.g., http://testphp.vulnweb.com): {RESET}").strip()
     
+    if not target:
+        print(f"{WHITE}[!] Error: Target URL cannot be empty.{RESET}")
+        return
+
+    if not target.startswith("http://") and not target.startswith("https://"):
+        target = "http://" + target
+
+    print(f"\n{NEON_BLUE}[*] Initializing scan sequence for target:{RESET} {WHITE}{target}{RESET}")
+    print(f"{GRAY}[*] Analyzing HTTP Response & Security Headers...{RESET}\n")
+
     try:
-        response_ping = requests.post(ping_url, data=payload_data)
-        # إذا ظهرت نتائج أمر id مثل uid أو gid فهذا يدل على وجود الثغرة
-        if "uid=" in response_ping.text or "gid=" in response_ping.text:
-            print(f"[!] تنبيه خطير جداً: تم اكتشاف ثغرة Command Injection في صفحة الـ Ping!")
-        else:
-            print(f"[-] مسار الـ Ping محصن وآمن ضد حقن الأوامر 🛡️")
-            
-    except requests.exceptions.ConnectionError:
-        print(f"[-] خطأ: تعذر الاتصال بالسيرفر في مسار الـ Ping.")
-        
-    print("\n[+] انتهى الفحص الشامل بنجاح يا قائد!")
+        req = urllib.request.Request(
+            target, 
+            headers={'User-Agent': 'Phantom-Security-Scanner/2.0'}
+        )
+        with urllib.request.urlopen(req, timeout=7) as response:
+            status = response.getcode()
+            headers = response.info()
+
+            print(f"{NEON_BLUE}[+] Connection Successful! Status Code: {status}{RESET}\n")
+            print(f"{DARK_BLUE}--- Security Headers Audit ---{RESET}")
+
+            sec_headers = [
+                'Content-Security-Policy', 
+                'X-Frame-Options', 
+                'X-XSS-Protection', 
+                'X-Content-Type-Options',
+                'Strict-Transport-Security'
+            ]
+
+            for header in sec_headers:
+                if header in headers:
+                    print(f" {NEON_BLUE}[SECURE]{RESET} {header}: {headers[header]}")
+                else:
+                    print(f" {GRAY}[VULN/MISSING]{RESET} {header}: Not Configured")
+
+            print(f"\n{NEON_BLUE}[+] Target scan completed successfully.{RESET}")
+
+    except urllib.error.HTTPError as e:
+        print(f"\n{WHITE}[!] HTTP Error encountered: {e.code} - {e.reason}{RESET}")
+    except urllib.error.URLError as e:
+        print(f"\n{WHITE}[!] Connection Failed: {e.reason}{RESET}")
+    except Exception as e:
+        print(f"\n{WHITE}[!] An unexpected error occurred: {e}{RESET}")
 
 if __name__ == "__main__":
-    target = "http://127.0.0.1:5000"
-    scan_target(target)
+    scan_target()
 
