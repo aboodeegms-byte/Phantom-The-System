@@ -1,73 +1,81 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+PHANTOM THE SYSTEM - Main Command Center
+Developer: Commander Phantom
+Style: Black & Neon Blue CLI Interface
+"""
+
 import os
 import sys
+import subprocess
+import time
 
-def banner():
-    print("""
-\033[1;36m=========================================================
-      🛡️ PHANTOM THE SYSTEM - ADVANCED FRAMEWORK 🛡️
-      Cybersecurity Operations Center (Level 5)
-=========================================================\033[0m
-""")
+# Neon Blue & Black Theme Color Codes
+NEON_BLUE = "\033[38;2;0;243;255m"
+DARK_BLUE = "\033[38;2;0;119;182m"
+BG_BLACK = "\033[48;2;10;10;12m"
+BOLD = "\033[1m"
+RESET = "\033[0m"
+WHITE = "\033[97m"
+GRAY = "\033[90m"
 
-def smart_ai_commander(command):
-    cmd = command.lower().strip()
-    print(f"\n[🤖 PHANTOM CO-PILOT] Analyzing command: '{command}'...")
-    
-    if "scan" in cmd or "vulnerability" in cmd:
-        print("[+] Match found: Running Phantom Scanner...")
-        os.system("python phantom_scanner.py")
-    elif "port" in cmd or "ports" in cmd:
-        print("[+] Match found: Running Port Scanner...")
-        os.system("python phantom_ports.py")
-    elif "lab" in cmd or "server" in cmd:
-        print("[+] Match found: Starting Vulnerable Lab...")
-        os.system("python vulnerable_app.py")
-    elif "info" in cmd or "system" in cmd:
-        print("[+] Match found: Checking Termux packages...")
-        os.system("pkg list-installed | wc -l")
-    elif "exit" in cmd or "quit" in cmd:
-        print("\n\033[1;31m[!] Shutting down Phantom The System.. Stay secure, Commander! 🚀\033[0m")
-        sys.exit()
-    else:
-        print("[-] Unknown command! Try typing: 'scan', 'ports', 'lab', 'info', or 'exit'.")
+def clear_screen():
+    os.system('clear' if os.name != 'nt' else 'cls')
+
+def print_banner():
+    clear_screen()
+    banner = f"""{BG_BLACK}{NEON_BLUE}{BOLD}
+    ===============================================================
+     ____  _   _    _    _  _____ ___  __  __   ____  _  __   __
+    |  _ \| | | |  / \  | \|_   _/ _ \|  \/  | / ___|| | \ \ / /
+    | |_) | |_| | / _ \ | .` || || | | | |\/| | \___ \| |  \ V / 
+    |  __/|  _  |/ ___ \| |\ || || |_| | |  | |  ___) | |___| |  
+    |_|   |_| |_/_/   \_\_| \_||_| \___/|_|  |_| |____/|_____|_|  
+                                                                   
+                  [ COMMANDER PHANTOM SYSTEM v1.0.0 ]               
+    ===============================================================
+    {RESET}"""
+    print(banner)
 
 def main_menu():
     while True:
-        banner()
-        print("\033[1;32m[ Main Operations - Commander Phantom ]\033[0m")
-        print("1. 🔍 Run Vulnerability Scanner (Phantom Scanner v2.0)")
-        print("2. 🌐 Run Port Scanner (Phantom Ports v1.0)")
-        print("3. 🧪 Run Vulnerable Lab Environment (Phantom Lab)")
-        print("4. 🤖 Launch PHANTOM CO-PILOT (AI Smart Terminal)")
-        print("5. 🛠️ System & Termux Packages Management")
-        print("0. 🚪 Exit System")
+        print_banner()
+        print(f"{DARK_BLUE}[+] Select Operations Module:{RESET}\n")
+        print(f" {NEON_BLUE}[1]{RESET} {WHITE}Vulnerability Scanner (XSS & Injection){RESET}")
+        print(f" {NEON_BLUE}[2]{RESET} {WHITE}Port Scanner (Fast TCP Target Audit){RESET}")
+        print(f" {NEON_BLUE}[3]{RESET} {WHITE}Launch Local Vulnerable Lab (Flask Server){RESET}")
+        print(f" {NEON_BLUE}[4]{RESET} {WHITE}Phantom Co-Pilot Terminal Assistant{RESET}")
+        print(f" {NEON_BLUE}[0]{RESET} {GRAY}Exit Operations{RESET}\n")
         
-        choice = input("\n[?] Enter choice OR type direct command (e.g., 'ports'): ")
+        choice = input(f"{NEON_BLUE}{BOLD}PHANTOM-CLI > {RESET}").strip()
         
         if choice == '1':
-            os.system("python phantom_scanner.py")
-            input("\n[ Press Enter to return ]")
+            print(f"\n{DARK_BLUE}[*] Launching Phantom Scanner...{RESET}")
+            subprocess.run([sys.executable, "phantom_scanner.py"])
+            input(f"\n{GRAY}Press Enter to return to main menu...{RESET}")
         elif choice == '2':
-            os.system("python phantom_ports.py")
-            input("\n[ Press Enter to return ]")
+            print(f"\n{DARK_BLUE}[*] Launching Port Scanner...{RESET}")
+            subprocess.run([sys.executable, "phantom_ports.py"])
+            input(f"\n{GRAY}Press Enter to return to main menu...{RESET}")
         elif choice == '3':
-            os.system("python vulnerable_app.py")
-            input("\n[ Press Enter to return ]")
+            print(f"\n{DARK_BLUE}[*] Launching Weaker App Lab...{RESET}")
+            subprocess.run([sys.executable, "weaker_app.py"])
+            input(f"\n{GRAY}Press Enter to return to main menu...{RESET}")
         elif choice == '4':
-            user_input = input("\n[🤖 PHANTOM CO-PILOT] Enter your command, Commander: ")
-            smart_ai_commander(user_input)
-            input("\n[ Press Enter to return ]")
-        elif choice == '5':
-            os.system("pkg list-installed | wc -l")
-            input("\n[ Press Enter to return ]")
+            print(f"\n{NEON_BLUE}[+] Phantom Co-Pilot Active. Type 'exit' to return.{RESET}")
+            while True:
+                cmd = input(f"{DARK_BLUE}Co-Pilot > {RESET}").strip()
+                if cmd.lower() == 'exit':
+                    break
+                print(f"{GRAY}[Assistant] Command logged/processed: {cmd}{RESET}")
         elif choice == '0':
-            print("\n\033[1;31m[!] Shutting down.. Stay secure, Commander! 🚀\033[0m")
-            sys.exit()
+            print(f"\n{NEON_BLUE}[*] Shutting down Phantom System... Stay Secure!{RESET}\n")
+            sys.exit(0)
         else:
-            smart_ai_commander(choice)
-            input("\n[ Press Enter to return ]")
+            print(f"\n{WHITE}[!] Invalid selection, try again.{RESET}")
+            time.sleep(1)
 
 if __name__ == "__main__":
     main_menu()
-
 
