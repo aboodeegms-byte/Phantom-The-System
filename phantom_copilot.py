@@ -76,7 +76,6 @@ def main_menu():
                 print(f"     TACTICAL SECURITY DASHBOARD & LOG MANAGER      ")
                 print(f"===================================================={RESET}\n")
                 
-                # Check log file size and status
                 if os.path.exists("phantom_report.txt"):
                     size_bytes = os.path.getsize("phantom_report.txt")
                     with open("phantom_report.txt", "r", encoding="utf-8") as rf:
@@ -127,10 +126,10 @@ def main_menu():
             
         elif choice == '7':
             print(f"\n{WHITE}--- Quick Commands ---{RESET}")
+            print(f"  {NEON_BLUE}python phantom_copilot.py{RESET} -> Run Operations Room")
             print(f"  {NEON_BLUE}python phantom_scanner.py{RESET} -> Run Web Scanner directly")
             print(f"  {NEON_BLUE}python phantom_ports.py{RESET}   -> Run Port Scanner directly")
-            print(f"  {NEON_BLUE}python weaker_app.py{RESET}      -> Run Local Lab directly")
-            print(f"  {NEON_BLUE}git push origin main{RESET}      -> Sync updates with GitHub\n")
+            print(f"  {NEON_BLUE}python weaker_app.py{RESET}      -> Run Local Lab directly\n")
             input(f"{GRAY}Press Enter to return to main menu...{RESET}")
             
         elif choice == '0':
@@ -142,5 +141,3 @@ def main_menu():
 
 if __name__ == "__main__":
     main_menu()
-EOF
-
