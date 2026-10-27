@@ -1,40 +1,23 @@
-import socket
 import sys
+import socket
 
-BANNER = """
-=========================================
-    🛡️ PHANTOM PORT SCANNER - v1.0 🛡️
-    أداة فحص البوابات السريعة
-=========================================
-"""
+NEON_BLUE = "\033[38;2;0;243;255m"
+DARK_BLUE = "\033[38;2;0;119;182m"
+RESET = "\033[0m"
+WHITE = "\033[97m"
+GRAY = "\033[90m"
 
-def scan_ports(target_ip):
-    print(BANNER)
-    print(f"[*] جاري فحص البوابات الأساسية للهدف: {target_ip}\n")
-    
-    # قائمة بأهم البوابات الشائعة للاختبار
-    ports_to_scan = [21, 22, 80, 443, 3306, 5000, 8080]
-    
-    for port in ports_to_scan:
-        try:
-            # إنشاء اتصال Socket
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(1)
-            result = s.connect_ex((target_ip, port))
-            
-            if result == 0:
-                print(f"[+] البوابة (Port {port}) مفتوحة ومتاحة 🟢")
-            else:
-                print(f"[-] البوابة (Port {port}) مغلقة 🔴")
-                
-            s.close()
-        except socket.error:
-            print(f"[-] تعذر الاتصال بالهدف.")
-            break
-            
-    print("\n[+] انتهى فحص البوابات بنجاح يا قائد!")
+print(f"\n{NEON_BLUE}=== PHANTOM PORT SCANNER ==={RESET}\n")
+target = input(f"{DARK_BLUE}Enter target IP (e.g. 127.0.0.1): {RESET}").strip()
 
-if __name__ == "__main__":
-    target = "127.0.0.1"
-    scan_ports(target)
+ports = [21, 22, 80, 443, 3306, 8080]
+for p in ports:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(1)
+    if s.connect_ex((target, p)) == 0:
+        print(f" {NEON_BLUE}[OPEN]{RESET} Port {p}")
+    else:
+        print(f" {GRAY}[CLOSED]{RESET} Port {p}")
+    s.close()
+print(f"\n{NEON_BLUE}[+] Scan Finished!{RESET}")
 
